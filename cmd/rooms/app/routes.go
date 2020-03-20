@@ -17,7 +17,20 @@ func (s Server) InitRoutes() {
 		panic(errors.New("can't create database"))
 	}
 	defer conn.Release()
-
+	_, err = conn.Exec(context.Background(), `
+Create table if not exists rooms
+(
+    id       Bigserial primary key,
+    status   bool,
+    timestart text NOT NULL ,
+    timestop text NOT NULL ,
+    filename  text NOT NULL ,
+    removed   bool DEFAULT FALSE
+);
+`)
+	if err != nil {
+		panic(errors.New("can't create database"))
+	}
 	s.router.GET(
 		"/api/rooms",
 		s.handleRoomsList(),
