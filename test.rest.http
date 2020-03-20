@@ -1,0 +1,22 @@
+GET http://localhost:9999/api/rooms
+Authorization: Bearer {{auth_token}}
+
+###
+
+POST http://localhost:9999/api/rooms/new
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "status": false,
+  "time_start": "17:00",
+  "time_stop": "19:00",
+  "file_name": "123.pg"
+}
+
+###
+
+DELETE http://localhost:9999/api/rooms/4
+Authorization: Bearer {{auth_token}}
+
+###
