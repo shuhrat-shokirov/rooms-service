@@ -5,14 +5,14 @@ import (
 	"flag"
 	"fmt"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/shuhrat-shokirov/di/pkg/di"
 	"github.com/shuhrat-shokirov/jwt/pkg/cmd"
-	"github.com/shuhrat-shokirov/mux/pkg/mux"
+	"github.com/shuhrat-shokirov/new-mux/pkg/mux"
 	"net"
 	"net/http"
 	"os"
 	"rooms-service/cmd/rooms/app"
 	"rooms-service/pkg/core/rooms"
+	"rooms-service/pkg/core/rooms/history"
 )
 
 var (
@@ -46,25 +46,16 @@ func checkENV(env string, loc string) string {
 	return str
 }
 func start(addr string, dsn string,  secret jwt.Secret) {
-	container := di.NewContainer()
-	container.Provide(
-		app.NewServer,
-		mux.NewExactMux,
-		rooms.NewService,
-		func() DSN { return DSN(dsn) },
-		func() jwt.Secret { return secret },
-		func(dsn DSN) *pgxpool.Pool {
-			pool, err := pgxpool.Connect(context.Background(), string(dsn))
-			if err != nil {
-				panic(fmt.Errorf("can't create pool: %w", err))
-			}
-			return pool
-		},
-	)
+	pool, err := pgxpool.Connect(context.Background(), string(dsn))
+	if err != nil {
+		panic(fmt.Errorf("can't create pool: %w", err))
+	}
 
-	container.Start()
+	roomsSvc := rooms.NewService()
+	exactMux := mux.NewExactMux()
+	historySvc := history.NewService()
+	server := app.NewServer(exactMux, pool, roomsSvc, secret, historySvc)
+	server.Start()
+	panic(http.ListenAndServe(addr, server))
 
-	var appServer *app.Server
-	container.Component(&appServer)
-	panic(http.ListenAndServe(addr, appServer))
 }

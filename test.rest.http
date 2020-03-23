@@ -1,22 +1,67 @@
-GET http://localhost:9999/api/rooms
-Authorization: Bearer {{auth_token}}
+GET http://localhost:1111/api/rooms
+
 
 ###
 
-POST https://io-rooms-service.herokuapp.com/api/rooms/new
+POST http://localhost:1111/api/rooms/new
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
-  "status": false,
-  "time_start": "17:00",
-  "time_stop": "19:00",
-  "file_name": "123.pg"
+  "name": "Red Room",
+  "file_name": "123.png"
+}
+
+###
+DELETE http://localhost:9999/api/rooms/1
+
+
+###
+POST http://localhost:9999/api/rooms/lock/2
+
+###
+POST http://localhost:9999/api/rooms/unlock/1
+
+###
+GET http://localhost:9999/api/rooms/unlock
+
+###
+GET http://localhost:9999/api/rooms/locked
+
+###
+
+POST http://localhost:1111/api/rooms/history/0
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "room_id": 1,
+  "user_login": "admin",
+  "name_meeting": "Митинг",
+  "start_time": 0,
+  "end_time": 1
+}
+
+###
+GET http://localhost:1111/api/rooms/history
+
+
+###
+GET http://localhost:1111/api/rooms/history/1
+
+
+###
+POST http://localhost:1111/api/rooms/history/add/result/1
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "result": "Что-то случилось"
 }
 
 ###
 
-DELETE http://localhost:9999/api/rooms/4
-Authorization: Bearer {{auth_token}}
+GET http://localhost:1111/api/history/room/1
 
 ###
+
